@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Election Commission Login</title>
+    <link rel="stylesheet" href="chiefLogin.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Election Commission Login</h1>
+        <form id="loginForm">
+            <label for="aadhaar">Aadhaar Number:</label>
+            <input type="text" id="aadhaar" name="aadhaar" required maxlength="12" pattern="\d{12}" placeholder="Enter 12-digit Aadhaar">
+
+            <label for="electionID">Election Member ID:</label>
+            <input type="text" id="electionID" name="electionID" required placeholder="Enter Election Member ID">
+
+            <button type="button" onclick="validateLogin()">Login</button>
+        </form>
+        <p id="errorMessage" class="error-message"></p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.3/dist/web3.min.js"></script>
+    <script src="chiefLogin.js"></script>
+</body>
+</html>

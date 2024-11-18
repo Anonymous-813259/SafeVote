@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Election Results</title>
+    <link rel="stylesheet" href="results.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Election Results</h1>
+            <p>The final vote count is displayed below in winning order.</p>
+        </header>
+
+        <section id="results-section">
+            <table id="results-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Candidate Name</th>
+                        <th>Party Name</th>
+                        <th>Vote Count</th>
+                    </tr>
+                </thead>
+                <tbody id="results-body">
+                    <!-- Results will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.3/dist/web3.min.js"></script>
+    <script src="results.js"></script>
+</body>
+</html>

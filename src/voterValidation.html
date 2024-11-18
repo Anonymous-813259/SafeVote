@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voter Validation</title>
+    <link rel="stylesheet" href="voterValidation.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Voter Validation</h1>
+            <p>Enter your details to proceed to the voting page.</p>
+        </header>
+
+        <section id="validation-section">
+            <form id="validation-form">
+                <div class="input-group">
+                    <label for="aadhaar-number">Aadhaar Number</label>
+                    <input type="text" id="aadhaar-number" placeholder="Enter your Aadhaar Number" maxlength="12" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="voter-id">Voter ID</label>
+                    <input type="text" id="voter-id" placeholder="Enter your Voter ID" maxlength="10" required>
+                </div>
+
+                <button type="button" id="validate-button" onclick="validateVoter()">Validate</button>
+            </form>
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.3/dist/web3.min.js"></script>
+    <script src="voterValidation.js"></script>
+</body>
+</html>

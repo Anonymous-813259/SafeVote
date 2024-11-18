@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeVote - Secure Voting Platform</title>
+    <link rel="stylesheet" href="category.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Online Voting System</h1>
+        <p>Select a category to continue:</p>
+
+        <div class="categories">
+            <!-- Category 1: Election Commission -->
+            <div class="category election-commission" onclick="navigateTo('Election Commission')">
+                <h2>Election Commission</h2>
+                <p>Manage election settings and oversee voting processes.</p>
+            </div>
+
+            <!-- Category 2: Vote Registration -->
+            <div class="category vote-registration" onclick="navigateTo('Vote Registration')">
+                <h2>Vote Registration</h2>
+                <p>Register to vote and manage your voting details.</p>
+            </div>
+
+            <!-- Category 3: Voting -->
+            <div class="category voting" onclick="navigateTo('Voting')">
+                <h2>Voting</h2>
+                <p>Cast your vote securely and transparently.</p>
+            </div>
+
+            <!-- Category 4: Winning -->
+            <div class="category results" onclick="navigateTo('Results')">
+                <h2>Results</h2>
+                <p>View results and see the winning candidates.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.3/dist/web3.min.js"></script>
+    <script src="category.js"></script>
+</body>
+</html>
