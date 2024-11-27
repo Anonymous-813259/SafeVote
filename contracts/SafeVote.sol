@@ -8,25 +8,38 @@ contract SafeVote {
         bool hasVoted;
         string district;
         string state;
+        string hash;
     }
     struct Candidate{
-        uint id;
+        string id;
         string name;
-        uint age;
+        string age;
+        string partyName;
         string district;
         string state;
         uint voteCount;
     }
+    // struct registerAadhaar{
+    //     bool registered;
+    // }
+    // struct registerID{
+    //     bool registered;
+    // }
+    mapping (string => bool) public registerAadhaar;
+    mapping (string => bool) public registerID;
+    string public chiefAadhaar="369852014724";
+    string public chiefID="VDWA1597RG";
     Voter[] voterList;
     Candidate[] public candidateList;
     address public chief;
     bool candidateRegistrationOpen;
     bool voterRegistrationOpen;
-    bool votingOpen;
-    bool resultViewOpen;
-    mapping (string => address) voterAddressMap;
-    mapping (address => Voter) voterDetailsMap;
-    mapping (uint => bool) candidateRegister;
+    bool public votingOpen;
+    bool public resultViewOpen;
+    mapping (string => address) public voterAddressMap;
+    mapping (address => Voter) public voterDetailsMap;
+    mapping (string => bool) public candidateRegister;
+    mapping (string => uint) public candidateIdIndMap;
 
     // Modifiers
     modifier onlyElectionChief(){
@@ -53,14 +66,40 @@ contract SafeVote {
         require(chief!=address(0),"Set Chief First");
         _;
     }
+    modifier aadhaarValidation(string memory aadhaar){
+        require(keccak256(bytes(aadhaar))==keccak256(bytes(chiefAadhaar)),"Enter valid Aadhaar");
+        _;
+    }
+    modifier idValidation(string memory id){
+        require(keccak256(bytes(id))==keccak256(bytes(chiefID)),"Enter valid Id");
+        _;
+    }
+    modifier checkChief(){
+        require(msg.sender==chief,"You have no rights to change these details");
+        _;
+    }
+    modifier isAadhaarRegistered(string memory aadhaar){
+        require(!registerAadhaar[aadhaar], "Aadhaar already registered!");
+        _;
+    }
+    modifier isIdRegistered(string memory id){
+        require(!registerID[id], "ID already registered!");
+        _;
+    }
 
     // Functions
-    function setChief() public {
+    function setChief(string memory aadhaar, string memory id) public aadhaarValidation(aadhaar) idValidation(id) {
+        require(chief==address(0),"Chief already set with different address");
         chief=msg.sender;
     }
-    function resetChief() public {
-        chief = address(0);
+    function updateDetails(string memory aadhaar, string memory id) public ifChief checkChief {
+        chiefAadhaar=aadhaar;
+        chiefID=id;
+        chief=address(0);
     }
+    // function resetChief() public {
+    //     chief = address(0);
+    // }
     function setCandidateRegistration() public ifChief onlyElectionChief{
         candidateRegistrationOpen=true;
         voterRegistrationOpen=false;
@@ -85,43 +124,38 @@ contract SafeVote {
         votingOpen=false;
         resultViewOpen=true;
     }
-    function registerCandidate(uint id,string memory name, uint age, string memory district, string memory state) public ifChief onlyElectionChief duringCandidateRegistration{
+    function registerCandidate(string memory id,string memory name, string memory age, string memory partyName, string memory district, string memory state) public ifChief onlyElectionChief duringCandidateRegistration{
         require(!candidateRegister[id],"Candidate ID Already Registered");
-        candidateList.push(Candidate(id,name,age,district,state,0));
+        candidateList.push(Candidate(id, name, age, partyName, district, state, 0));
         candidateRegister[id]=true;
+        candidateIdIndMap[id]=candidateList.length-1;
     }
-    function registerVoter(string memory hash, string memory district, string memory state) public duringVoterRegistration{
+    function registerVoter(string memory hash, string memory district, string memory state, string memory aadhaar, string memory id) public duringVoterRegistration isAadhaarRegistered(aadhaar) isIdRegistered(id){
         require(voterAddressMap[hash]==address(0),"Voter Already Registered with these Details");
         require(!voterDetailsMap[msg.sender].isRegistered,"Voter Already Registered with this Address");
+        registerAadhaar[aadhaar]=true;
+        registerID[id]=true;
         voterAddressMap[hash]=msg.sender;
-        voterDetailsMap[msg.sender]=Voter(true,false,district,state);
+        voterDetailsMap[msg.sender]=Voter(true,false,district,state,hash);
     }
-    function toString(uint num) internal pure returns (string memory){
-        if(num==0){
-            return '0';
+    function checkRegister(string memory hash) public view returns (string memory){
+        if(voterAddressMap[hash] == address(0)){
+            return "VOTER NOT REGISTERED";
         }
-        uint256 temp = num;
-        uint256 digits;
-        while(temp!=0){
-            digits++;
-            temp/=10;
+        else if(voterAddressMap[hash] != msg.sender){
+            return "VOTER REGISTERED WITH DIFFERENT ADDRESS";
         }
-        bytes memory buffer = new bytes(digits);
-        while(num!=0){
-            digits--;
-            buffer[digits]=bytes1(uint8(48+(num%10)));
-            num/=10;
+        else{
+            return "VOTER REGISTERED SUCCESSFULLY";
         }
-        return string(buffer);
     }
-    function vote(uint id) public duringVoting{
-        Voter memory voterDetails=voterDetailsMap[msg.sender];
-        require(voterDetails.isRegistered, "Voter not Registered");
-        require(!voterDetails.hasVoted,"Voter already Voted");
-        candidateList[id].voteCount+=1;
-        voterDetails.hasVoted=true;
+    function vote(string memory id) public duringVoting{
+        require(voterDetailsMap[msg.sender].isRegistered, "Voter not Registered");
+        require(!voterDetailsMap[msg.sender].hasVoted,"Voter already Voted");
+        candidateList[candidateIdIndMap[id]].voteCount+=1;
+        voterDetailsMap[msg.sender].hasVoted=true;
     }
-    function resultView() public view returns (Candidate[] memory){
+    function getCandidateList() public view returns (Candidate[] memory){
         return candidateList;
     }
 }
